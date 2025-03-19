@@ -2,6 +2,7 @@ apply from: "../commons-limited-device.gradle"
 apply from : '../dependencies.gradle'
 
 android {
+    namespace "org.torproject.android.tv"
     defaultConfig {
         applicationId "org.torproject.android.tv"
         minSdkVersion 23 

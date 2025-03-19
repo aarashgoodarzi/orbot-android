@@ -2,9 +2,10 @@ apply from: "../commons-device.gradle"
 apply from : '../dependencies.gradle'
 
 android {
+    namespace "org.torproject.android.mini"
     defaultConfig {
         applicationId "org.torproject.android.mini"
-        minSdkVersion 16
+        minSdkVersion 26
         targetSdkVersion 31
         multiDexEnabled true
     }
@@ -14,7 +15,7 @@ android {
     productFlavors {
         mini {
             dimension "freemini"
-            minSdkVersion 16
+            minSdkVersion 26
             applicationId 'org.torproject.android.mini'
             targetSdkVersion 28
             versionCode 10020000

@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply from: "../commons.gradle"
 
 android {
+    namespace "com.google.zxing.integration.android"
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 31
