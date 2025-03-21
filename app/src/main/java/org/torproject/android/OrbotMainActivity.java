@@ -845,7 +845,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             switch (torStatus) {
                 case STATUS_ON:
                     imgStatus.setImageResource(R.drawable.toron);
-                    mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.primary));
+                    mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_connected));
                     mBtnStart.setText(R.string.menu_stop);
                     mPulsator.stop();
 
@@ -886,7 +886,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 case STATUS_OFF:
                     lblStatus.setText(String.format("Tor v%s", getTorVersion()));
                     imgStatus.setImageResource(R.drawable.toroff);
-                    mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.inactive_background));
+                    mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_disconnected));
                     lblPorts.setText("");
                     mBtnStart.setText(R.string.menu_start);
                     mPulsator.start();
