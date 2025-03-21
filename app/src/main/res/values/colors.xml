@@ -1,8 +1,10 @@
 
     <resources>
         <color name="primary">#5274F1</color>
+        <color name="primary_pair">#2F438B</color>
         <color name="secondary">#FFF</color>
         <color name="inactive_background">#47444E</color>
+        <color name="inactive_background_pair">#47444E1A</color>
         <color name="panel_background_main">#efefef</color>
         <color name="bright_green">#ccff2a</color>
         <color name="dark_green">#669901</color>
