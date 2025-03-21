@@ -69,45 +69,52 @@
                 <FrameLayout
                     android:id="@+id/frameMain"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="300dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_margin="3dp"
-                    android:background="#11CCCCCC"
                     android:orientation="vertical"
                     android:visibility="visible"
                     android:weightSum="1">
 
-                    <pl.bclogic.pulsator4droid.library.PulsatorLayout
-                        android:id="@+id/pulsator"
+                    <!-- لی‌اوت پدر برای هم‌ترازی -->
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingTop="40dp"
-                        app:pulse_color="@color/secondary"
-                        app:pulse_count="8"
-                        app:pulse_duration="2000"
-                        app:pulse_interpolator="Linear"
-                        app:pulse_repeat="10"
-                        app:pulse_startFromScratch="false">
+                        android:layout_gravity="center">
 
+                        <!-- PulsatorLayout برای ایجاد پالس -->
+                        <pl.bclogic.pulsator4droid.library.PulsatorLayout
+                            android:id="@+id/pulsator"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            app:pulse_color="@color/secondary"
+                            app:pulse_count="4"
+                            app:pulse_duration="4000"
+                            app:pulse_interpolator="Linear"
+                            app:pulse_repeat="0" />
+
+                        <!-- ImageView برای آیکون تور -->
                         <ImageView
                             android:id="@+id/imgStatus"
-                            android:layout_width="match_parent"
+                            android:layout_width="225dp"
                             android:layout_height="225dp"
+                            android:layout_gravity="center"
                             android:layout_margin="0dp"
                             android:padding="0dp"
                             android:src="@drawable/toroff" />
 
-                    </pl.bclogic.pulsator4droid.library.PulsatorLayout>
+                        <!-- دکمه -->
+                        <Button
+                            android:id="@+id/btnStart"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@android:color/transparent"
+                            android:text="@string/menu_start" />
 
-                    <Button
-                        android:id="@+id/btnStart"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="20dp"
-                        android:background="@android:color/transparent"
-                        android:text="@string/menu_start" />
+                    </FrameLayout>
                 </FrameLayout>
 
                 <TextView

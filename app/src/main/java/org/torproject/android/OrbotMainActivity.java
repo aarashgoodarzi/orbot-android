@@ -42,7 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.widget.ImageButton;
 import net.freehaven.tor.control.TorControlCommands;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -313,6 +313,9 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ImageButton toolbarRefresh = toolbar.findViewById(R.id.toolbar_refresh);
+        toolbarRefresh.setOnClickListener(v -> requestNewTorIdentity());
+
 
         mDrawer = findViewById(R.id.drawer_layout);
 
@@ -359,6 +362,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         setCountrySpinner();
 
         mPulsator = findViewById(R.id.pulsator);
+        mPulsator.start();
         tvVpnAppStatus = findViewById(R.id.tvVpnAppStatus);
         findViewById(R.id.ivAppVpnSettings).setOnClickListener(v -> startActivityForResult(new Intent(OrbotMainActivity.this, AppManagerActivity.class), REQUEST_VPN_APPS_SELECT));
 
@@ -535,9 +539,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_newnym) {
-            requestNewTorIdentity();
-        } else if (item.getItemId() == R.id.menu_settings) {
+        if (item.getItemId() == R.id.menu_settings) {
             Intent intent = SettingsPreferencesActivity.createIntent(this, R.xml.preferences);
             startActivityForResult(intent, REQUEST_SETTINGS);
         } else if (item.getItemId() == R.id.menu_exit) {
@@ -844,10 +846,11 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             torStatus = newTorStatus;
             switch (torStatus) {
                 case STATUS_ON:
+                    mPulsator.stop();
                     imgStatus.setImageResource(R.drawable.toron);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_connected));
                     mBtnStart.setText(R.string.menu_stop);
-                    mPulsator.stop();
+
 
                     var status = getString(R.string.status_activated);
                     if (IPtProxy.isSnowflakeProxyRunning()) {
@@ -863,6 +866,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     break;
 
                 case STATUS_STARTING:
+                    mPulsator.start();
                     imgStatus.setImageResource(R.drawable.torstarting);
                     mBtnStart.setText("...");
 
@@ -876,6 +880,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     break;
 
                 case STATUS_STOPPING:
+                    mPulsator.start();
                     if (torServiceMsg != null && torServiceMsg.contains(LOG_NOTICE_HEADER))
                         lblStatus.setText(torServiceMsg);
 
@@ -884,12 +889,12 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     break;
 
                 case STATUS_OFF:
+                    mPulsator.start();
                     lblStatus.setText(String.format("Tor v%s", getTorVersion()));
                     imgStatus.setImageResource(R.drawable.toroff);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_disconnected));
                     lblPorts.setText("");
                     mBtnStart.setText(R.string.menu_start);
-                    mPulsator.start();
                     resetBandwidthStatTextviews();
                     setTitleForSnowflakeProxy();
                     break;
