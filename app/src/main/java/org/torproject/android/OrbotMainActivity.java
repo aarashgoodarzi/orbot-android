@@ -89,6 +89,7 @@ import pl.bclogic.pulsator4droid.library.PulsatorLayout;
 
 public class OrbotMainActivity extends AppCompatActivity implements OrbotConstants {
 
+    private LinearLayout mainLayout;
     private static final String INTENT_ACTION_REQUEST_V3_ONION_SERVICE = "org.torproject.android.REQUEST_V3_ONION_SERVICE";
     private static final String INTENT_EXTRA_REQUESTED_V3_HOSTNAME = "org.torproject.android.REQUESTED_V3_HOSTNAME";
     private static final int REQUEST_VPN = 8888;
@@ -307,6 +308,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
     private void doLayout() {
         setContentView(R.layout.layout_main);
+
+        mainLayout = findViewById(R.id.main_layout);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -842,6 +845,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             switch (torStatus) {
                 case STATUS_ON:
                     imgStatus.setImageResource(R.drawable.toron);
+                    mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.primary));
                     mBtnStart.setText(R.string.menu_stop);
                     mPulsator.stop();
 
@@ -882,6 +886,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 case STATUS_OFF:
                     lblStatus.setText(String.format("Tor v%s", getTorVersion()));
                     imgStatus.setImageResource(R.drawable.toroff);
+                    mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.inactive_background));
                     lblPorts.setText("");
                     mBtnStart.setText(R.string.menu_start);
                     mPulsator.start();
