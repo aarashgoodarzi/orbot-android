@@ -69,7 +69,7 @@
                 <FrameLayout
                     android:id="@+id/frameMain"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="280dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_margin="3dp"
@@ -77,13 +77,11 @@
                     android:visibility="visible"
                     android:weightSum="1">
 
-                    <!-- لی‌اوت پدر برای هم‌ترازی -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center">
 
-                        <!-- PulsatorLayout برای ایجاد پالس -->
                         <pl.bclogic.pulsator4droid.library.PulsatorLayout
                             android:id="@+id/pulsator"
                             android:layout_width="match_parent"
@@ -95,7 +93,14 @@
                             app:pulse_interpolator="Linear"
                             app:pulse_repeat="0" />
 
-                        <!-- ImageView برای آیکون تور -->
+                        <View
+                            android:id="@+id/glowHalo"
+                            android:layout_width="230dp"
+                            android:layout_height="230dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/circle_white_50_opacity"
+                            android:visibility="gone" />
+
                         <ImageView
                             android:id="@+id/imgStatus"
                             android:layout_width="225dp"
@@ -105,7 +110,7 @@
                             android:padding="0dp"
                             android:src="@drawable/toroff" />
 
-                        <!-- دکمه -->
+
                         <Button
                             android:id="@+id/btnStart"
                             android:layout_width="wrap_content"

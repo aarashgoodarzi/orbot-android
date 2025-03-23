@@ -107,7 +107,9 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
     // this is what takes messages or values from the callback threads or other non-mainUI threads
     // and passes them back into the main UI thread for display to the user
     private final Handler mStatusUpdateHandler = new MainActivityStatusUpdateHandler(this);
-    PulsatorLayout mPulsator;
+    private PulsatorLayout mPulsator;
+
+    private View mGlowHalo;
     AlertDialog aDialog;
     private TextView lblStatus; //the main text display widget
     private TextView lblPorts;
@@ -363,6 +365,9 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
         mPulsator = findViewById(R.id.pulsator);
         mPulsator.start();
+
+        mGlowHalo = findViewById(R.id.glowHalo);
+
         tvVpnAppStatus = findViewById(R.id.tvVpnAppStatus);
         findViewById(R.id.ivAppVpnSettings).setOnClickListener(v -> startActivityForResult(new Intent(OrbotMainActivity.this, AppManagerActivity.class), REQUEST_VPN_APPS_SELECT));
 
@@ -847,6 +852,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             switch (torStatus) {
                 case STATUS_ON:
                     mPulsator.stop();
+                    mGlowHalo.setVisibility(View.VISIBLE);
                     imgStatus.setImageResource(R.drawable.toron);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_connected));
                     mBtnStart.setText(R.string.menu_stop);
@@ -866,7 +872,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     break;
 
                 case STATUS_STARTING:
-                    mPulsator.start();
+                    mPulsator.stop();
+                    mGlowHalo.setVisibility(View.VISIBLE);
                     imgStatus.setImageResource(R.drawable.torstarting);
                     mBtnStart.setText("...");
 
@@ -880,7 +887,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     break;
 
                 case STATUS_STOPPING:
-                    mPulsator.start();
+                    mPulsator.stop();
+                    mGlowHalo.setVisibility(View.VISIBLE);
                     if (torServiceMsg != null && torServiceMsg.contains(LOG_NOTICE_HEADER))
                         lblStatus.setText(torServiceMsg);
 
@@ -890,6 +898,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
                 case STATUS_OFF:
                     mPulsator.start();
+                    mGlowHalo.setVisibility(View.GONE);
                     lblStatus.setText(String.format("Tor v%s", getTorVersion()));
                     imgStatus.setImageResource(R.drawable.toroff);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_disconnected));
