@@ -108,7 +108,7 @@
                             android:layout_gravity="center"
                             android:layout_margin="0dp"
                             android:padding="0dp"
-                            android:src="@drawable/toroff" />
+                            android:src="@drawable/vpn_off" />
 
 
                         <Button

@@ -6,7 +6,6 @@ package org.torproject.android;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Application;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -853,7 +852,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 case STATUS_ON:
                     mPulsator.stop();
                     mGlowHalo.setVisibility(View.VISIBLE);
-                    imgStatus.setImageResource(R.drawable.toron);
+                    imgStatus.setImageResource(R.drawable.vpn_on);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_connected));
                     mBtnStart.setText(R.string.menu_stop);
 
@@ -900,7 +899,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     mPulsator.start();
                     mGlowHalo.setVisibility(View.GONE);
                     lblStatus.setText(String.format("Tor v%s", getTorVersion()));
-                    imgStatus.setImageResource(R.drawable.toroff);
+                    imgStatus.setImageResource(R.drawable.vpn_off);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_disconnected));
                     lblPorts.setText("");
                     mBtnStart.setText(R.string.menu_start);
