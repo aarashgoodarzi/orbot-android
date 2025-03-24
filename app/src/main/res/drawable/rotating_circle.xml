@@ -4,18 +4,6 @@
     android:viewportWidth="200"
     android:viewportHeight="200">
 
-<!--    <path-->
-<!--        android:pathData="M4,100A96,96 0 0,1 196,100"-->
-<!--        android:strokeColor="#3F51B5"-->
-<!--        android:strokeWidth="8"-->
-<!--        android:fillColor="#00000000" />-->
-
-<!--    <path-->
-<!--        android:pathData="M196,100A96,96 0 0,1 4,100"-->
-<!--        android:strokeColor="#3F51B5"-->
-<!--        android:strokeWidth="8"-->
-<!--        android:fillColor="#00000000" />-->
-
     <path
         android:pathData="M4,100A96,96 0 0,1 4,98"
         android:strokeColor="#FFF"
