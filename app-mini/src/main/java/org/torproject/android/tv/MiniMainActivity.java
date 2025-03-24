@@ -109,7 +109,6 @@ public class MiniMainActivity extends AppCompatActivity implements OrbotConstant
         @Override
         public void handleMessage(final Message msg) {
 
-
             Bundle data = msg.getData();
 
             switch (msg.what) {
@@ -785,8 +784,6 @@ public class MiniMainActivity extends AppCompatActivity implements OrbotConstant
 
         } else if (torStatus == STATUS_STARTING) {
 
-            imgStatus.setImageResource(R.drawable.torstarting);
-
             if (torServiceMsg != null) {
                 if (torServiceMsg.contains(LOG_NOTICE_BOOTSTRAPPED)) {
                     //        		lblStatus.setText(torServiceMsg);
@@ -800,8 +797,6 @@ public class MiniMainActivity extends AppCompatActivity implements OrbotConstant
 
             //	  if (torServiceMsg != null && torServiceMsg.contains(LOG_NOTICE_HEADER))
             //    	lblStatus.setText(torServiceMsg);
-
-            imgStatus.setImageResource(R.drawable.torstarting);
 //            lblStatus.setText(torServiceMsg);
 
         } else if (torStatus == STATUS_OFF) {

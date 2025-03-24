@@ -914,8 +914,6 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     mGlowHalo.setVisibility(View.GONE);
                     if (torServiceMsg != null && torServiceMsg.contains(LOG_NOTICE_HEADER))
                         lblStatus.setText(torServiceMsg);
-
-                    imgStatus.setImageResource(R.drawable.torstarting);
                     lblStatus.setText(torServiceMsg);
                     break;
 

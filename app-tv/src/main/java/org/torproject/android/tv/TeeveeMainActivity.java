@@ -794,8 +794,6 @@ public class TeeveeMainActivity extends Activity implements OrbotConstants, OnLo
 
         } else if (torStatus == STATUS_STARTING) {
 
-            imgStatus.setImageResource(R.drawable.torstarting);
-
             if (torServiceMsg != null) {
                 if (torServiceMsg.contains(LOG_NOTICE_BOOTSTRAPPED)) {
                     //        		lblStatus.setText(torServiceMsg);
@@ -810,7 +808,6 @@ public class TeeveeMainActivity extends Activity implements OrbotConstants, OnLo
             //	  if (torServiceMsg != null && torServiceMsg.contains(TorServiceConstants.LOG_NOTICE_HEADER))
             //    	lblStatus.setText(torServiceMsg);
 
-            imgStatus.setImageResource(R.drawable.torstarting);
 //            lblStatus.setText(torServiceMsg);
 
         } else if (torStatus == STATUS_OFF) {
