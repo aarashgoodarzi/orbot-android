@@ -31,6 +31,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -109,6 +111,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
     private PulsatorLayout mPulsator;
 
     private View mGlowHalo;
+    private ImageView mRotatingCircle;
+    private Animation mRotateAnimation;
     AlertDialog aDialog;
     private TextView lblStatus; //the main text display widget
     private TextView lblPorts;
@@ -366,6 +370,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         mPulsator.start();
 
         mGlowHalo = findViewById(R.id.glowHalo);
+        mRotatingCircle = findViewById(R.id.rotating_circle);
+        mRotateAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate);
 
         tvVpnAppStatus = findViewById(R.id.tvVpnAppStatus);
         findViewById(R.id.ivAppVpnSettings).setOnClickListener(v -> startActivityForResult(new Intent(OrbotMainActivity.this, AppManagerActivity.class), REQUEST_VPN_APPS_SELECT));
@@ -851,6 +857,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             switch (torStatus) {
                 case STATUS_ON:
                     mPulsator.stop();
+                    mRotatingCircle.clearAnimation();
+                    mRotatingCircle.setVisibility(View.GONE);
                     mGlowHalo.setVisibility(View.VISIBLE);
                     imgStatus.setImageResource(R.drawable.vpn_on);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_connected));
@@ -872,6 +880,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
                 case STATUS_STARTING:
                     mPulsator.stop();
+                    mRotatingCircle.setVisibility(View.VISIBLE);
+                    mRotatingCircle.startAnimation(mRotateAnimation);
                     mGlowHalo.setVisibility(View.VISIBLE);
                     imgStatus.setImageResource(R.drawable.torstarting);
                     mBtnStart.setText("...");
@@ -887,6 +897,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
                 case STATUS_STOPPING:
                     mPulsator.stop();
+                    mRotatingCircle.clearAnimation();
+                    mRotatingCircle.setVisibility(View.GONE);
                     mGlowHalo.setVisibility(View.VISIBLE);
                     if (torServiceMsg != null && torServiceMsg.contains(LOG_NOTICE_HEADER))
                         lblStatus.setText(torServiceMsg);
@@ -897,10 +909,13 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
                 case STATUS_OFF:
                     mPulsator.start();
+                    mRotatingCircle.clearAnimation();
+                    mRotatingCircle.setVisibility(View.GONE);
                     mGlowHalo.setVisibility(View.GONE);
                     lblStatus.setText(String.format("Tor v%s", getTorVersion()));
                     imgStatus.setImageResource(R.drawable.vpn_off);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_disconnected));
+                    lblPorts.setText("");
                     lblPorts.setText("");
                     mBtnStart.setText(R.string.menu_start);
                     resetBandwidthStatTextviews();
