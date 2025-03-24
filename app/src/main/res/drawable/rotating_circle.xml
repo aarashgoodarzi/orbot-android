@@ -1,12 +1,25 @@
-<!-- res/drawable/rotating_circle.xml -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="512dp"
-    android:height="512dp"
-    android:viewportWidth="512"
-    android:viewportHeight="512">
-  <path
-      android:fillColor="#00000000"
-      android:strokeColor="#FFFFFF"
-      android:strokeWidth="4"
-      android:pathData="M256,256m-245,0a245,245 0 1,0 490,0a245,245 0 1,0 -490,0" />
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+<!--    <path-->
+<!--        android:pathData="M4,100A96,96 0 0,1 196,100"-->
+<!--        android:strokeColor="#3F51B5"-->
+<!--        android:strokeWidth="8"-->
+<!--        android:fillColor="#00000000" />-->
+
+<!--    <path-->
+<!--        android:pathData="M196,100A96,96 0 0,1 4,100"-->
+<!--        android:strokeColor="#3F51B5"-->
+<!--        android:strokeWidth="8"-->
+<!--        android:fillColor="#00000000" />-->
+
+    <path
+        android:pathData="M4,100A96,96 0 0,1 4,98"
+        android:strokeColor="#FFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
 </vector>
