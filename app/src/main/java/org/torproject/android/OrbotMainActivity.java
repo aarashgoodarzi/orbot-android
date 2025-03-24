@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -133,6 +134,10 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
     // used when apps request a new v3 service
     private long lastInsertedOnionServiceRowId = -1;
+    private Handler mTimerHandler;
+    private Runnable mTimerRunnable;
+    private long mConnectionStartTime;
+    private boolean mIsTimerRunning = false;
 
     /**
      * The state and log info from {@link OrbotService} are sent to the UI here in
@@ -235,6 +240,14 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mLocalBroadcastReceiver);
+        stopTimer();
+        mRotateAnimator.cancel();
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -359,6 +372,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
         mBtnVPN.setOnCheckedChangeListener((buttonView, isChecked) -> enableVPN(isChecked));
 
+        setupTimer();
+
         mBtnBridges = findViewById(R.id.btnBridges);
         mBtnBridges.setChecked(Prefs.bridgesEnabled());
         mBtnBridges.setOnClickListener(v -> {
@@ -429,6 +444,22 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 showSnowflakeLog();
             }
         });
+    }
+
+    private void  setupTimer() {
+        mTimerHandler = new Handler(Looper.getMainLooper());
+        mTimerRunnable = new Runnable() {
+            @SuppressLint("DefaultLocale")
+            @Override
+            public void run() {
+                long elapsedTime = System.currentTimeMillis() - mConnectionStartTime;
+                long seconds = elapsedTime / 1000;
+                long minutes = seconds / 60;
+                seconds = seconds % 60;
+                mBtnStart.setText(String.format("%02d:%02d", minutes, seconds));
+                mTimerHandler.postDelayed(this, 1000);
+            }
+        };
     }
 
     private void showSnowflakeLog () {
@@ -887,6 +918,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
                     // if new onion hostnames are generated, update local DB
                     sendIntentToService(ACTION_UPDATE_ONION_NAMES);
+                    startTimer();
                     break;
 
                 case STATUS_STARTING:
@@ -912,6 +944,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     mRotatingCircle.setVisibility(View.GONE);
                     mRotateAnimator.cancel();
                     mGlowHalo.setVisibility(View.GONE);
+                    mBtnStart.setText("Disconnecting...");
                     if (torServiceMsg != null && torServiceMsg.contains(LOG_NOTICE_HEADER))
                         lblStatus.setText(torServiceMsg);
                     lblStatus.setText(torServiceMsg);
@@ -930,8 +963,24 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     mBtnStart.setText(R.string.menu_start);
                     resetBandwidthStatTextviews();
                     setTitleForSnowflakeProxy();
+                    stopTimer();
                     break;
             }
+        }
+    }
+
+    private void startTimer() {
+        if (!mIsTimerRunning) {
+            mConnectionStartTime = System.currentTimeMillis();
+            mTimerHandler.post(mTimerRunnable);
+            mIsTimerRunning = true;
+        }
+    }
+
+    private void stopTimer() {
+        if (mIsTimerRunning) {
+            mTimerHandler.removeCallbacks(mTimerRunnable);
+            mIsTimerRunning = false;
         }
     }
 
@@ -942,12 +991,6 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
     private void requestTorStatus() { // Request tor status without starting
         sendIntentToService(ACTION_STATUS);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mLocalBroadcastReceiver);
     }
 
     private String formatTotal(long count) {
