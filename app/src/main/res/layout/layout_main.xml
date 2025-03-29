@@ -82,6 +82,27 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center">
 
+                        <ImageView
+                            android:id="@+id/backgroundMap1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/dotted_world_map"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/backgroundMap2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/dotted_world_map"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/backgroundMap3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/dotted_world_map"
+                            android:scaleType="centerCrop" />
+
                         <pl.bclogic.pulsator4droid.library.PulsatorLayout
                             android:id="@+id/pulsator"
                             android:layout_width="match_parent"

@@ -116,6 +116,11 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
     private View mGlowHalo;
     private ImageView mRotatingCircle;
     private ValueAnimator mRotateAnimator;
+    private ImageView mBackgroundMap1;
+    private ImageView mBackgroundMap2;
+    private ImageView mBackgroundMap3;
+    private ValueAnimator mMapScrollAnimator;
+    private float mMapWidth;
     AlertDialog aDialog;
     private TextView lblStatus; //the main text display widget
     private TextView lblPorts;
@@ -246,6 +251,9 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mLocalBroadcastReceiver);
         stopTimer();
+        if (mMapScrollAnimator != null) {
+            mMapScrollAnimator.cancel();
+        }
         mRotateAnimator.cancel();
     }
 
@@ -386,6 +394,11 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         mPulsator = findViewById(R.id.pulsator);
         mPulsator.start();
 
+        mBackgroundMap1 = findViewById(R.id.backgroundMap1);
+        mBackgroundMap2 = findViewById(R.id.backgroundMap2);
+        mBackgroundMap3 = findViewById(R.id.backgroundMap3);
+        setupMapScrollAnimation();
+
         mGlowHalo = findViewById(R.id.glowHalo);
 
         mRotatingCircle = findViewById(R.id.rotating_circle);
@@ -443,6 +456,46 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             public void onClick(View v) {
                 showSnowflakeLog();
             }
+        });
+    }
+
+    private void setupMapScrollAnimation() {
+        mBackgroundMap1.post(() -> {
+            mMapWidth = mBackgroundMap1.getWidth();
+            if (mMapWidth == 0) {
+                mMapWidth = 512;
+            }
+
+            mBackgroundMap1.setTranslationX(0);
+            mBackgroundMap2.setTranslationX(mMapWidth);
+            mBackgroundMap3.setTranslationX(2 * mMapWidth);
+
+            mMapScrollAnimator = ValueAnimator.ofFloat(0f, -mMapWidth);
+            mMapScrollAnimator.setDuration(5000);
+            mMapScrollAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            mMapScrollAnimator.setInterpolator(new LinearInterpolator());
+            mMapScrollAnimator.addUpdateListener(animation -> {
+                float translationX = (float) animation.getAnimatedValue();
+
+                float pos1 = translationX;
+                float pos2 = translationX + mMapWidth;
+                float pos3 = translationX + 2 * mMapWidth;
+
+                if (pos1 <= -mMapWidth) {
+                    pos1 += 3 * mMapWidth; 
+                }
+                if (pos2 <= -mMapWidth) {
+                    pos2 += 3 * mMapWidth;
+                }
+                if (pos3 <= -mMapWidth) {
+                    pos3 += 3 * mMapWidth;
+                }
+
+                mBackgroundMap1.setTranslationX(pos1);
+                mBackgroundMap2.setTranslationX(pos2);
+                mBackgroundMap3.setTranslationX(pos3);
+            });
+            mMapScrollAnimator.start();
         });
     }
 
