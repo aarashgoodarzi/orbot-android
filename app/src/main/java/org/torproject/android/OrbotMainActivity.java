@@ -354,6 +354,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         lblStatus.setText(String.format("Tor v%s", getTorVersion()));
 
         lblPorts = findViewById(R.id.lblPorts);
+        lblPorts.setVisibility(View.GONE);
 
         imgStatus = findViewById(R.id.imgStatus);
         imgStatus.setOnLongClickListener(v -> {
@@ -405,6 +406,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         setupRotateAnimator();
 
         tvVpnAppStatus = findViewById(R.id.tvVpnAppStatus);
+        // TODO: move this to bottom navigation
         findViewById(R.id.ivAppVpnSettings).setOnClickListener(v -> startActivityForResult(new Intent(OrbotMainActivity.this, AppManagerActivity.class), REQUEST_VPN_APPS_SELECT));
 
         findViewById(R.id.btn_snowflake_log).setVisibility(Prefs.getBridgesList().equals("snowflake") ? View.GONE : View.VISIBLE);

@@ -157,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/frameMain"
                     android:layout_gravity="top|center"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
@@ -180,6 +180,7 @@
                     android:textSize="14sp" />
 
                 <LinearLayout
+                    android:layout_marginTop="40dp"
                     android:id="@+id/controls"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -193,7 +194,6 @@
                         android:layout_gravity="center"
                         android:layout_margin="3dp"
                         android:layout_weight="1"
-                        android:background="#11CCCCCC"
                         android:orientation="vertical">
 
                         <Spinner
@@ -213,7 +213,6 @@
                         android:layout_gravity="center"
                         android:layout_margin="3dp"
                         android:layout_weight="1"
-                        android:background="#11CCCCCC"
                         android:orientation="vertical">
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -230,6 +229,7 @@
 
 
                 <LinearLayout
+                    android:layout_marginTop="25dp"
                     android:id="@+id/traffic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -303,6 +303,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/row_bridges"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
@@ -332,6 +333,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/boxVpnStatus"
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
