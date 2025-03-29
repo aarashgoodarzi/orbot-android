@@ -471,7 +471,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             mBackgroundMap3.setTranslationX(2 * mMapWidth);
 
             mMapScrollAnimator = ValueAnimator.ofFloat(0f, -mMapWidth);
-            mMapScrollAnimator.setDuration(5000);
+            mMapScrollAnimator.setDuration(10000);
             mMapScrollAnimator.setRepeatCount(ValueAnimator.INFINITE);
             mMapScrollAnimator.setInterpolator(new LinearInterpolator());
             mMapScrollAnimator.addUpdateListener(animation -> {
@@ -482,7 +482,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 float pos3 = translationX + 2 * mMapWidth;
 
                 if (pos1 <= -mMapWidth) {
-                    pos1 += 3 * mMapWidth; 
+                    pos1 += 3 * mMapWidth;
                 }
                 if (pos2 <= -mMapWidth) {
                     pos2 += 3 * mMapWidth;
@@ -495,7 +495,6 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 mBackgroundMap2.setTranslationX(pos2);
                 mBackgroundMap3.setTranslationX(pos3);
             });
-            mMapScrollAnimator.start();
         });
     }
 
@@ -958,7 +957,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     imgStatus.setImageResource(R.drawable.vpn_on);
                     mainLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_connected));
                     mBtnStart.setText(R.string.menu_stop);
-
+                    mMapScrollAnimator.start();
 
                     var status = getString(R.string.status_activated);
                     if (IPtProxy.isSnowflakeProxyRunning()) {
@@ -1017,6 +1016,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     resetBandwidthStatTextviews();
                     setTitleForSnowflakeProxy();
                     stopTimer();
+                    mMapScrollAnimator.cancel();
                     break;
             }
         }
