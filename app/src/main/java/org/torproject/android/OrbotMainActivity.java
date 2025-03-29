@@ -402,14 +402,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         mGlowHalo = findViewById(R.id.glowHalo);
 
         mRotatingCircle = findViewById(R.id.rotating_circle);
-        mRotateAnimator = ValueAnimator.ofFloat(0f, 360f);
-        mRotateAnimator.setDuration(2000);
-        mRotateAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        mRotateAnimator.setInterpolator(new LinearInterpolator());
-        mRotateAnimator.addUpdateListener(animation -> {
-            float rotation = (float) animation.getAnimatedValue();
-            mRotatingCircle.setRotation(rotation);
-        });
+        setupRotateAnimator();
 
         tvVpnAppStatus = findViewById(R.id.tvVpnAppStatus);
         findViewById(R.id.ivAppVpnSettings).setOnClickListener(v -> startActivityForResult(new Intent(OrbotMainActivity.this, AppManagerActivity.class), REQUEST_VPN_APPS_SELECT));
@@ -456,6 +449,16 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             public void onClick(View v) {
                 showSnowflakeLog();
             }
+        });
+    }
+    private void  setupRotateAnimator() {
+        mRotateAnimator = ValueAnimator.ofFloat(0f, 360f);
+        mRotateAnimator.setDuration(2000);
+        mRotateAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mRotateAnimator.setInterpolator(new LinearInterpolator());
+        mRotateAnimator.addUpdateListener(animation -> {
+            float rotation = (float) animation.getAnimatedValue();
+            mRotatingCircle.setRotation(rotation);
         });
     }
 
