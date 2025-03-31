@@ -637,9 +637,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
         RecyclerView recyclerView = bottomSheetView.findViewById(R.id.countryRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true); // بهبود عملکرد
+        recyclerView.setHasFixedSize(true); 
 
-        // تنظیم CountryAdapter
         CountryAdapter countryAdapter = new CountryAdapter(this, countryList, position -> {
             spnCountries.setSelection(position);
 
