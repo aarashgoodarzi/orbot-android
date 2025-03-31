@@ -633,11 +633,10 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         }
 
         bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        bottomSheetDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
         RecyclerView recyclerView = bottomSheetView.findViewById(R.id.countryRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true); 
+        recyclerView.setHasFixedSize(true);
 
         CountryAdapter countryAdapter = new CountryAdapter(this, countryList, position -> {
             spnCountries.setSelection(position);
