@@ -19,6 +19,8 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.net.VpnService;
 import android.os.Build;
@@ -32,7 +34,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -41,14 +45,18 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageButton;
+
 import net.freehaven.tor.control.TorControlCommands;
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -57,6 +65,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.torproject.android.core.Languages;
 import org.torproject.android.core.LocaleHelper;
@@ -154,7 +164,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            String status =  intent.getStringExtra(EXTRA_STATUS);
+            String status = intent.getStringExtra(EXTRA_STATUS);
             if (action == null) return;
 
             switch (action) {
@@ -188,7 +198,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     break;
                 }
                 case LOCAL_ACTION_V3_NAMES_UPDATED:
-                    if (lastInsertedOnionServiceRowId == -1) break; // another app did not request an onion service
+                    if (lastInsertedOnionServiceRowId == -1)
+                        break; // another app did not request an onion service
                     String where = OnionServiceContentProvider.OnionService._ID + "=" + lastInsertedOnionServiceRowId;
                     Cursor v3Cursor = getContentResolver().query(OnionServiceContentProvider.CONTENT_URI,
                             OnionServiceContentProvider.PROJECTION, where, null, null);
@@ -229,11 +240,11 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     break;
                 }
                 case LOCAL_ACTION_SNOWFLAKE_PROXY: {
-                 //   updateStatus(STATUS_ON,"");
+                    //   updateStatus(STATUS_ON,"");
 
                     if (IPtProxy.isSnowflakeProxyRunning()) {
                         status += "\n" + getString(R.string.snowflake_proxy_enabled)
-                                + " (" + Prefs.getSnowflakesServed()+ " " + SNOWFLAKE_PROXY_EMOJI + ")";
+                                + " (" + Prefs.getSnowflakesServed() + " " + SNOWFLAKE_PROXY_EMOJI + ")";
 
                     }
                     lblStatus.setText(status);
@@ -309,8 +320,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         if (torStatus.equals(STATUS_ON)) {
             if (mBtnVPN.isChecked()) sendIntentToService(ACTION_STOP_VPN);
             sendIntentToService(ACTION_STOP);
-        }
-        else if (torStatus.equals(STATUS_STARTING) || torStatus.equals(STATUS_STOPPING)) {
+        } else if (torStatus.equals(STATUS_STARTING) || torStatus.equals(STATUS_STOPPING)) {
             if (!waitingToStop) {
                 waitingToStop = true;
                 mStatusUpdateHandler.postDelayed(() -> {
@@ -427,9 +437,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     fileTorDir = getDir(DIRECTORY_TOR_DATA, Application.MODE_PRIVATE);
                 }
 
-                File fileSnowflake = new File(fileTorDir,LOG_SNOWFLAKE);
-                if (fileSnowflake.exists())
-                {
+                File fileSnowflake = new File(fileTorDir, LOG_SNOWFLAKE);
+                if (fileSnowflake.exists()) {
                     try {
                         String logSnowflake = Utils.readString(new FileInputStream(fileSnowflake));
                         sb.append(logSnowflake).append("\n");
@@ -439,7 +448,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 }
 
                 Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT,sb.toString());
+                intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
                 intent.setType("text/plain");
                 startActivity(intent);
 
@@ -453,7 +462,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             }
         });
     }
-    private void  setupRotateAnimator() {
+
+    private void setupRotateAnimator() {
         mRotateAnimator = ValueAnimator.ofFloat(0f, 360f);
         mRotateAnimator.setDuration(2000);
         mRotateAnimator.setRepeatCount(ValueAnimator.INFINITE);
@@ -503,7 +513,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         });
     }
 
-    private void  setupTimer() {
+    private void setupTimer() {
         mTimerHandler = new Handler(Looper.getMainLooper());
         mTimerRunnable = new Runnable() {
             @SuppressLint("DefaultLocale")
@@ -519,7 +529,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         };
     }
 
-    private void showSnowflakeLog () {
+    private void showSnowflakeLog() {
 
         StringBuffer sb = new StringBuffer();
 
@@ -531,9 +541,8 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             fileTorDir = getDir(DIRECTORY_TOR_DATA, Application.MODE_PRIVATE);
         }
 
-        File fileSnowflake = new File(fileTorDir,LOG_SNOWFLAKE);
-        if (fileSnowflake.exists())
-        {
+        File fileSnowflake = new File(fileTorDir, LOG_SNOWFLAKE);
+        if (fileSnowflake.exists()) {
             try {
                 String logSnowflake = Utils.readString(new FileInputStream(fileSnowflake));
                 sb.append(logSnowflake).append("\n");
@@ -546,9 +555,10 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
     }
 
-    private String getTorVersion () {
+    private String getTorVersion() {
         return OrbotService.BINARY_TOR_VERSION.split("-")[0];
     }
+
     private void resetBandwidthStatTextviews() {
         String zero = String.format("%s / %s", OrbotService.formatBandwidthCount(this, 0), formatTotal(0));
         downloadText.setText(zero);
@@ -567,13 +577,13 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
     private void setCountrySpinner() {
         String currentExit = Prefs.getExitNodes();
+        ArrayAdapter<String> adapter;
+
         if (currentExit.length() > 4) {
-            //someone put a complex value in, so let's disable
             ArrayList<String> cList = new ArrayList<>();
             cList.add(0, currentExit);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cList);
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cList);
             spnCountries.setAdapter(adapter);
-
             spnCountries.setEnabled(false);
         } else {
             int selIdx = -1;
@@ -581,55 +591,98 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             ArrayList<String> cList = new ArrayList<>();
             cList.add(0, getString(R.string.vpn_default_world));
 
-
-            Map<String, Locale> sortedCountries = new TreeMap<>(Collator.getInstance()); // tree map sorts by key...
+            Map<String, Locale> sortedCountries = new TreeMap<>(Collator.getInstance());
             for (String countryCode : COUNTRY_CODES) {
                 Locale locale = new Locale("", countryCode);
                 sortedCountries.put(locale.getDisplayCountry(), locale);
             }
 
             int index = 0;
-
             for (String countryDisplayName : sortedCountries.keySet()) {
                 String countryCode = sortedCountries.get(countryDisplayName).getCountry();
                 cList.add(Utils.convertCountryCodeToFlagEmoji(countryCode) + " " + countryDisplayName);
                 if (currentExit.contains(countryCode))
-                    selIdx =  index + 1;
+                    selIdx = index + 1;
                 index++;
             }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cList);
+
+            adapter = new ArrayAdapter<String>(this, R.layout.country_list_item, R.id.countryName, cList) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    TextView countryFlag = view.findViewById(R.id.countryFlag);
+                    TextView countryName = view.findViewById(R.id.countryName);
+
+                    String item = getItem(position);
+                    if (item != null) {
+                        if (position == 0) {
+                            countryFlag.setText("🌐");
+                            countryName.setText(item);
+                        } else {
+                            String[] parts = item.split(" ", 2);
+                            countryFlag.setText(parts[0]);
+                            countryName.setText(parts[1]);
+                        }
+                    }
+                    return view;
+                }
+
+                @Override
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    return getView(position, convertView, parent);
+                }
+            };
+
             spnCountries.setAdapter(adapter);
 
             if (selIdx > 0)
                 spnCountries.setSelection(selIdx, true);
 
-            spnCountries.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-                int mOldPosition = spnCountries.getSelectedItemPosition();
-
-                @Override
-                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                    if (mOldPosition == position)
-                        return;
-
-                    mOldPosition = position; //new position!
-
-                    String country = "";
-                    Object[] countries = sortedCountries.keySet().toArray();
-
-                    if (position != 0)
-                        country = '{' + sortedCountries.get(countries[position -1].toString()).getCountry() + '}';
-
-                    sendIntentToService(new Intent(OrbotMainActivity.this, OrbotService.class)
-                            .setAction(CMD_SET_EXIT)
-                            .putExtra("exit", country));
+            spnCountries.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    showCountryBottomSheet(adapter, sortedCountries);
                 }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parentView) { }
+                return true;
             });
         }
+    }
+
+    private void showCountryBottomSheet(ArrayAdapter<String> adapter, Map<String, Locale> sortedCountries) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_country_list, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
+        FrameLayout bottomSheet = bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            bottomSheet.setBackground(null);
+            bottomSheet.setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        ListView listView = bottomSheetView.findViewById(R.id.countryListView);
+        listView.setAdapter(adapter);
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
+
+        int currentPosition = spnCountries.getSelectedItemPosition();
+        listView.setSelection(currentPosition);
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            spnCountries.setSelection(position);
+
+            String country = "";
+            Object[] countries = sortedCountries.keySet().toArray();
+            if (position != 0) {
+                country = '{' + sortedCountries.get(countries[position - 1].toString()).getCountry() + '}';
+            }
+
+            sendIntentToService(new Intent(OrbotMainActivity.this, OrbotService.class)
+                    .setAction(CMD_SET_EXIT)
+                    .putExtra("exit", country));
+
+            bottomSheetDialog.dismiss();
+        });
+
+        bottomSheetDialog.show();
     }
 
     @Override
@@ -749,7 +802,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             case INTENT_ACTION_REQUEST_V3_ONION_SERVICE:
                 final var v3LocalPort = intent.getIntExtra("localPort", -1);
                 final var v3onionPort = intent.getIntExtra("onionPort", v3LocalPort);
-                var name = intent.getStringExtra("name") ;
+                var name = intent.getStringExtra("name");
                 if (name == null) name = "v3" + v3LocalPort;
                 final var finalName = name;
                 new AlertDialog.Builder(this)
@@ -813,13 +866,13 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         try {
             /**
 
-            if (pkg != null) {
-                i = pm.getLaunchIntentForPackage(pkg);
-                if (i == null)
-                    throw new PackageManager.NameNotFoundException();
-            } else {
-                i = new Intent();
-            }**/
+             if (pkg != null) {
+             i = pm.getLaunchIntentForPackage(pkg);
+             if (i == null)
+             throw new PackageManager.NameNotFoundException();
+             } else {
+             i = new Intent();
+             }**/
 
             i.setPackage(pkg);
 
@@ -829,8 +882,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             if (i.resolveActivity(pm) != null)
                 startActivity(i);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Should not occur. Ignore.
         }
     }
@@ -849,7 +901,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 finish();
 
                 mStatusUpdateHandler.postDelayed(() ->
-                    startActivity(new Intent(OrbotMainActivity.this, OrbotMainActivity.class)), 1000);
+                        startActivity(new Intent(OrbotMainActivity.this, OrbotMainActivity.class)), 1000);
             }
         } else if (request == REQUEST_VPN_APPS_SELECT) {
             if (response == RESULT_OK && torStatus.equals(STATUS_ON))
@@ -912,7 +964,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         if (Prefs.useVpn()) {
             // don't start the Intent, just update Orbot to say that VPN privileges are gone
             if (VpnService.prepare(this) != null) {
-               // Prefs.putUseVpn(false);
+                // Prefs.putUseVpn(false);
                 enableVPN(true);
             }
         }
@@ -967,7 +1019,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     var status = getString(R.string.status_activated);
                     if (IPtProxy.isSnowflakeProxyRunning()) {
                         status += "\n" + getString(R.string.snowflake_proxy_enabled)
-                                + " (" + Prefs.getSnowflakesServed()+ " " + SNOWFLAKE_PROXY_EMOJI + ")";
+                                + " (" + Prefs.getSnowflakesServed() + " " + SNOWFLAKE_PROXY_EMOJI + ")";
 
                     }
                     lblStatus.setText(status);

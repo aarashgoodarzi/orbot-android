@@ -10,6 +10,7 @@
     <string name="menu_start">Not Connected</string>
     <string name="menu_stop">Stop</string>
     <string name="menu_about">About</string>
+    <string name="select_country">Select Country</string>
     <string name="main_layout_download">Download</string>
     <string name="main_layout_upload">Upload</string>
     <string name="button_about">About</string>
@@ -201,7 +202,7 @@
     <string name="be_a_snowflake_desc">Allow other Tor users to connect to Tor through your device. (This can\'t be used if you connect alongside bridges)</string>
     <string name="be_a_snowflake_title_limit">Snowflake Proxy Limits</string>
     <string name="be_a_snowflake_desc_limit">Only when device is plugged in and on wifi</string>
-    <string formatted="true" name="snowflake_proxy_enabled">Snowflake proxy enabled</string>
+    <string name="snowflake_proxy_enabled" formatted="true">Snowflake proxy enabled</string>
     <string name="snowflake_proxy_msg_title">Show Connection Notification</string>
     <string name="snowflake_proxy_msg_description">Show a message when your snowflake helps someone circumvent censorship</string>
     <!-- new UX -->
