@@ -430,11 +430,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
                 File fileTorDir = null;
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    fileTorDir = new File(getDataDir(), DIRECTORY_TOR_DATA);
-                } else {
-                    fileTorDir = getDir(DIRECTORY_TOR_DATA, Application.MODE_PRIVATE);
-                }
+                fileTorDir = new File(getDataDir(), DIRECTORY_TOR_DATA);
 
                 File fileSnowflake = new File(fileTorDir, LOG_SNOWFLAKE);
                 if (fileSnowflake.exists()) {
@@ -534,11 +530,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
         File fileTorDir = null;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            fileTorDir = new File(getDataDir(), DIRECTORY_TOR_DATA);
-        } else {
-            fileTorDir = getDir(DIRECTORY_TOR_DATA, Application.MODE_PRIVATE);
-        }
+        fileTorDir = new File(getDataDir(), DIRECTORY_TOR_DATA);
 
         File fileSnowflake = new File(fileTorDir, LOG_SNOWFLAKE);
         if (fileSnowflake.exists()) {
@@ -574,6 +566,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setCountrySpinner() {
         String currentExit = Prefs.getExitNodes();
         ArrayAdapter<String> adapter;
@@ -584,7 +577,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cList);
             spnCountries.setAdapter(adapter);
             spnCountries.setEnabled(false);
-            updateSpinnerWidth(currentExit); // آپدیت عرض برای حالت custom
+            updateSpinnerWidth(currentExit);
         } else {
             int selIdx = -1;
 
@@ -612,7 +605,6 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             if (selIdx > 0)
                 spnCountries.setSelection(selIdx, true);
 
-            // آپدیت عرض اولیه
             String initialText = selIdx > 0 ? cList.get(selIdx) : cList.get(0);
             updateSpinnerWidth(initialText);
 
@@ -627,21 +619,18 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
     }
 
     private void updateSpinnerWidth(String text) {
-        // محاسبه عرض متن
         TextView tempTextView = new TextView(this);
-        tempTextView.setTextSize(16); // همون سایز متن Spinner
+        tempTextView.setTextSize(16);
         tempTextView.setText(text);
         tempTextView.measure(0, 0);
         int textWidth = tempTextView.getMeasuredWidth();
 
-        // اضافه کردن عرض پرچم (24dp) و فلش (16dp) و فاصله‌ها (8dp + 8dp)
         float density = getResources().getDisplayMetrics().density;
-        int flagWidth = (int) (24 * density); // 24dp پرچم
-        int arrowWidth = (int) (16 * density); // 16dp فلش
-        int padding = (int) (16 * density); // 8dp + 8dp فاصله
+        int flagWidth = (int) (24 * density);
+        int arrowWidth = (int) (16 * density);
+        int padding = (int) (16 * density);
         int totalWidth = textWidth + flagWidth + arrowWidth + padding;
 
-        // تنظیم عرض Spinner
         ViewGroup.LayoutParams params = spnCountries.getLayoutParams();
         params.width = totalWidth;
         spnCountries.setLayoutParams(params);
@@ -676,7 +665,6 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                     .setAction(CMD_SET_EXIT)
                     .putExtra("exit", country));
 
-            // آپدیت عرض بعد از انتخاب
             updateSpinnerWidth(countryList.get(position));
 
             bottomSheetDialog.dismiss();

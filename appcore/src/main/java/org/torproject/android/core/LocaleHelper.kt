@@ -23,10 +23,7 @@ object LocaleHelper {
 
     private fun setLocale(context: Context, language: String): Context {
         Prefs.setDefaultLocale(language)
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            updateResources(context, language)
-        else
-            updateResourcesLegacy(context, language)
+        return updateResources(context, language)
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -46,9 +43,7 @@ object LocaleHelper {
         val resources = context.resources
         val configuration = resources.configuration
         configuration.locale = locale
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(locale)
-        }
+        configuration.setLayoutDirection(locale)
         resources.updateConfiguration(configuration, resources.displayMetrics)
         return context
     }
