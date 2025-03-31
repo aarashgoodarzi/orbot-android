@@ -3,7 +3,6 @@
 
 package org.torproject.android;
 
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -36,13 +35,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -65,6 +61,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -575,6 +573,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setCountrySpinner() {
         String currentExit = Prefs.getExitNodes();
         ArrayAdapter<String> adapter;
@@ -589,7 +588,7 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             int selIdx = -1;
 
             ArrayList<String> cList = new ArrayList<>();
-            cList.add(0, getString(R.string.vpn_default_world));
+            cList.add(0, getString(R.string.vpn_default_world)); // اضافه کردن "Global (Auto)"
 
             Map<String, Locale> sortedCountries = new TreeMap<>(Collator.getInstance());
             for (String countryCode : COUNTRY_CODES) {
@@ -606,67 +605,42 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
                 index++;
             }
 
-
-            adapter = new ArrayAdapter<String>(this, R.layout.country_list_item, R.id.countryName, cList) {
-                @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
-                    TextView countryFlag = view.findViewById(R.id.countryFlag);
-                    TextView countryName = view.findViewById(R.id.countryName);
-
-                    String item = getItem(position);
-                    if (item != null) {
-                        if (position == 0) {
-                            countryFlag.setText("🌐");
-                            countryName.setText(item);
-                        } else {
-                            String[] parts = item.split(" ", 2);
-                            countryFlag.setText(parts[0]);
-                            countryName.setText(parts[1]);
-                        }
-                    }
-                    return view;
-                }
-
-                @Override
-                public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                    return getView(position, convertView, parent);
-                }
-            };
-
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cList);
             spnCountries.setAdapter(adapter);
 
             if (selIdx > 0)
                 spnCountries.setSelection(selIdx, true);
 
+            final ArrayList<String> finalCList = cList;
             spnCountries.setOnTouchListener((v, event) -> {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    showCountryBottomSheet(adapter, sortedCountries);
+                    showCountryBottomSheet(finalCList, sortedCountries);
                 }
                 return true;
             });
         }
     }
 
-    private void showCountryBottomSheet(ArrayAdapter<String> adapter, Map<String, Locale> sortedCountries) {
+    private void showCountryBottomSheet(ArrayList<String> countryList, Map<String, Locale> sortedCountries) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_country_list, null);
         bottomSheetDialog.setContentView(bottomSheetView);
+
         FrameLayout bottomSheet = bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
         if (bottomSheet != null) {
             bottomSheet.setBackground(null);
             bottomSheet.setBackgroundColor(Color.TRANSPARENT);
         }
 
-        ListView listView = bottomSheetView.findViewById(R.id.countryListView);
-        listView.setAdapter(adapter);
-        listView.setDivider(null);
-        listView.setDividerHeight(0);
+        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        bottomSheetDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
-        int currentPosition = spnCountries.getSelectedItemPosition();
-        listView.setSelection(currentPosition);
+        RecyclerView recyclerView = bottomSheetView.findViewById(R.id.countryRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true); // بهبود عملکرد
 
-        listView.setOnItemClickListener((parent, view, position, id) -> {
+        // تنظیم CountryAdapter
+        CountryAdapter countryAdapter = new CountryAdapter(this, countryList, position -> {
             spnCountries.setSelection(position);
 
             String country = "";
@@ -681,6 +655,9 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
 
             bottomSheetDialog.dismiss();
         });
+        recyclerView.setAdapter(countryAdapter);
+
+        recyclerView.scrollToPosition(0);
 
         bottomSheetDialog.show();
     }

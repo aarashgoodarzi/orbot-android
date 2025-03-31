@@ -1,5 +1,5 @@
 apply from: "../commons-device.gradle"
-apply from : '../dependencies.gradle'
+apply from: '../dependencies.gradle'
 
 /* gets the version name from the latest Git tag, stripping the leading v off */
 def getVersionName = { ->
@@ -20,7 +20,7 @@ android {
         applicationId "org.torproject.android"
         versionName getVersionName()
         minSdkVersion 26
-        targetSdkVersion 31
+        targetSdkVersion 35
         multiDexEnabled true
     }
     compileOptions {
@@ -72,15 +72,15 @@ android {
                 libs.androidx_localbroadcast,
                 libs.apl_appintro,
                 libs.bclogic_pulsator,
-           //     libs.ipt_proxy - using OrbotLib below
+                //     libs.ipt_proxy - using OrbotLib below
         )
         androidTestImplementation libs.fastlane_screengrab
         coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
         //building from AAR built from https://github.com/guardianproject/tor-android/commit/95eca2a8c9eb44068f11332d7731580a13ef7b28
         //    until a new full release is done
-       implementation files('../libs/tor-android-binary-release.aar')
+        implementation files('../libs/tor-android-binary-release.aar')
         implementation files('../libs/OrbotLib.aar')
-
+        implementation 'androidx.recyclerview:recyclerview:1.4.0'
     }
 }

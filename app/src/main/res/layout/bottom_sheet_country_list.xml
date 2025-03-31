@@ -16,13 +16,15 @@
         android:textColor="@android:color/white"
         android:gravity="center" />
 
-    <ListView
-        android:id="@+id/countryListView"
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/countryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
         android:clipToPadding="false"
-        android:paddingTop="20dp"
-    android:paddingBottom="16dp" />
+        android:paddingBottom="16dp" />
 
 </LinearLayout>
