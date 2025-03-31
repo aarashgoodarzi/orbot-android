@@ -35,6 +35,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -573,7 +574,6 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void setCountrySpinner() {
         String currentExit = Prefs.getExitNodes();
         ArrayAdapter<String> adapter;
@@ -584,11 +584,12 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cList);
             spnCountries.setAdapter(adapter);
             spnCountries.setEnabled(false);
+            updateSpinnerWidth(currentExit); // آپدیت عرض برای حالت custom
         } else {
             int selIdx = -1;
 
             ArrayList<String> cList = new ArrayList<>();
-            cList.add(0, getString(R.string.vpn_default_world)); // اضافه کردن "Global (Auto)"
+            cList.add(0, getString(R.string.vpn_default_world)); // "Global (Auto)"
 
             Map<String, Locale> sortedCountries = new TreeMap<>(Collator.getInstance());
             for (String countryCode : COUNTRY_CODES) {
@@ -611,6 +612,10 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             if (selIdx > 0)
                 spnCountries.setSelection(selIdx, true);
 
+            // آپدیت عرض اولیه
+            String initialText = selIdx > 0 ? cList.get(selIdx) : cList.get(0);
+            updateSpinnerWidth(initialText);
+
             final ArrayList<String> finalCList = cList;
             spnCountries.setOnTouchListener((v, event) -> {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -621,6 +626,26 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
         }
     }
 
+    private void updateSpinnerWidth(String text) {
+        // محاسبه عرض متن
+        TextView tempTextView = new TextView(this);
+        tempTextView.setTextSize(16); // همون سایز متن Spinner
+        tempTextView.setText(text);
+        tempTextView.measure(0, 0);
+        int textWidth = tempTextView.getMeasuredWidth();
+
+        // اضافه کردن عرض پرچم (24dp) و فلش (16dp) و فاصله‌ها (8dp + 8dp)
+        float density = getResources().getDisplayMetrics().density;
+        int flagWidth = (int) (24 * density); // 24dp پرچم
+        int arrowWidth = (int) (16 * density); // 16dp فلش
+        int padding = (int) (16 * density); // 8dp + 8dp فاصله
+        int totalWidth = textWidth + flagWidth + arrowWidth + padding;
+
+        // تنظیم عرض Spinner
+        ViewGroup.LayoutParams params = spnCountries.getLayoutParams();
+        params.width = totalWidth;
+        spnCountries.setLayoutParams(params);
+    }
     private void showCountryBottomSheet(ArrayList<String> countryList, Map<String, Locale> sortedCountries) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_country_list, null);
@@ -650,6 +675,9 @@ public class OrbotMainActivity extends AppCompatActivity implements OrbotConstan
             sendIntentToService(new Intent(OrbotMainActivity.this, OrbotService.class)
                     .setAction(CMD_SET_EXIT)
                     .putExtra("exit", country));
+
+            // آپدیت عرض بعد از انتخاب
+            updateSpinnerWidth(countryList.get(position));
 
             bottomSheetDialog.dismiss();
         });
