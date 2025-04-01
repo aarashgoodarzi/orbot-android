@@ -222,6 +222,7 @@
                                 android:layout_gravity="center"
                                 android:layout_margin="9dp"
                                 android:text="@string/apps_mode"
+                                app:thumbTint="@color/secondary"
                                 app:switchPadding="3dp" />
                         </LinearLayout>
 
